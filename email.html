@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email Sender (EmailJS)</title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    // Initialize EmailJS with your Public Key
+    emailjs.init("e02kXmJX3W98n3vRN"); 
+  </script>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #00bfff;
+    }
+
+    form {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+    }
+
+    input, textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      background: #222;
+      color: #fff;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #00bfff;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00a3cc;
+    }
+  </style>
+</head>
+<body>
+  <h2>📧 Send Email</h2>
+  <form id="email-form">
+    <input type="text" name="from_name" placeholder="Your Name" required />
+    <input type="email" name="from_email" placeholder="Your Email" required />
+    <input type="text" name="subject" placeholder="Subject" required />
+    <textarea name="message" placeholder="Write your message..." rows="5" required></textarea>
+    <button type="submit">Send Email</button>
+  </form>
+
+  <script>
+    document.getElementById('email-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      emailjs.sendForm("service_0zz9kdi", "template_v9x8r1v", this)
+        .then(() => {
+          alert("✅ Email sent successfully!");
+          this.reset();
+        }, (error) => {
+          console.error(error);
+          alert("❌ Failed to send email. Check console for details.");
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Maps Directions API Example</title>
+    <meta charset="utf-8" />
+    <style>
+      #map {
+        height: 90vh;
+        width: 100%;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial;
+        background: black;
+        color: white;
+        text-align: center;
+      }
+      h2 {
+        margin: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>🧭 Route from India Gate to Taj Mahal</h2>
+    <div id="map"></div>
+
+    <script>
+      let map;
+
+      function initMap() {
+        const delhi = { lat: 28.6129, lng: 77.2295 }; // India Gate
+
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: delhi,
+          zoom: 7,
+        });
+
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+
+        const request = {
+          origin: "India Gate, New Delhi",
+          destination: "Taj Mahal, Agra",
+          travelMode: google.maps.TravelMode.DRIVING,
+        };
+
+        directionsService.route(request, function (result, status) {
+          if (status === "OK") {
+            directionsRenderer.setDirections(result);
+          } else {
+            alert("Failed to get directions: " + status);
+          }
+        });
+      }
+    </script>
+
+    <!-- ✅ Load Google Maps JS API with Directions API enabled -->
+    <script async
+      src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+    </script>
+  </body>
+</html>

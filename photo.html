@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webcam Capture</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    video, canvas {
+      border: 2px solid white;
+      margin: 10px;
+      max-width: 100%;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #00ccff;
+      border: none;
+      border-radius: 5px;
+      color: black;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0099cc;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Webcam Photo Capture</h2>
+<video id="webcam" autoplay playsinline width="400"></video><br>
+<button onclick="captureAndDownload()">Click Me</button>
+<canvas id="snapshot" width="400" height="300" style="display:none;"></canvas>
+
+<script>
+  const video = document.getElementById('webcam');
+  const canvas = document.getElementById('snapshot');
+  const context = canvas.getContext('2d');
+
+  async function startWebcam() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+    } catch (err) {
+      alert("Error accessing webcam: " + err.message);
+    }
+  }
+
+  function captureAndDownload() {
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = canvas.toDataURL('image/png');
+
+    const link = document.createElement('a');
+    link.href = imageData;
+    link.download = 'captured_photo.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  window.onload = startWebcam;
+</script>
+
+</body>
+</html>

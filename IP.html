@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Map App</title>
+  <style>
+    :root {
+      --green: #34A853;
+      --blue: #4285F4;
+      --purple: #673AB7;
+      --grey: #f1f3f4;
+      --white: #fff;
+      --text-dark: #202124;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--grey);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+    #card {
+      background: var(--white);
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 700px;
+    }
+    h1 {
+      margin: 0 0 25px;
+      font-size: 28px;
+      color: var(--text-dark);
+      text-align: center;
+    }
+    label {
+      margin: 20px 0 8px;
+      font-weight: 600;
+      color: #333;
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .loc-btn   { background: var(--blue); }
+    .route-btn { background: var(--green); }
+    .search-btn{ background: var(--purple); }
+
+    button:hover {
+      transform: scale(1.03);
+      filter: brightness(0.95);
+    }
+    #info {
+      margin-top: 15px;
+      font-weight: 500;
+      color: #444;
+      text-align: center;
+    }
+    iframe {
+      margin-top: 25px;
+      width: 100%;
+      height: 360px;
+      border: 3px solid #ccc;
+      border-radius: 15px;
+    }
+    @media (max-width: 600px) {
+      .btn-row {
+        flex-direction: column;
+      }
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="card">
+    <h1>🌍 Smart Map App</h1>
+
+    <div class="btn-row">
+      <button class="loc-btn" onclick="showMyLocation()">📍 My Location</button>
+    </div>
+
+    <label for="dest">Destination:</label>
+    <input id="dest" placeholder="e.g. India Gate Delhi" />
+    <div class="btn-row">
+      <button class="route-btn" onclick="showRoute()">🧭 Show Route</button>
+    </div>
+
+    <label for="search">Search Nearby (ATM, cafe, gym…):</label>
+    <input id="search" placeholder="e.g. cafe, ATM, hospital" />
+    <div class="btn-row">
+      <button class="search-btn" onclick="searchNearby()">🔍 Search Nearby</button>
+    </div>
+
+    <p id="info"></p>
+    <iframe id="map" loading="lazy"></iframe>
+  </div>
+
+  <script>
+    let lat = null, lon = null;
+
+    function getLocation(done) {
+      if (lat && lon) { done(); return; }
+
+      if (!navigator.geolocation) {
+        alert("Your browser doesn’t support geolocation.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        p => {
+          lat = p.coords.latitude.toFixed(6);
+          lon = p.coords.longitude.toFixed(6);
+          document.getElementById('info').textContent =
+            `📌 Latitude: ${lat}, Longitude: ${lon}`;
+          done();
+        },
+        e => alert('Location error: ' + e.message),
+        { enableHighAccuracy: true }
+      );
+    }
+
+    function showMyLocation() {
+      getLocation(() => {
+        document.getElementById('map').src =
+          `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
+      });
+    }
+
+    function showRoute() {
+      const dest = document.getElementById('dest').value.trim();
+      if (!dest) { alert('Enter a destination.'); return; }
+
+      getLocation(() => {
+        const gmaps =
+          `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}` +
+          `&destination=${encodeURIComponent(dest)}&travelmode=driving`;
+
+        window.open(gmaps, '_blank');
+
+        document.getElementById('map').src =
+          `https://maps.google.com/maps?q=${encodeURIComponent(dest)}&output=embed`;
+      });
+    }
+
+    function searchNearby() {
+      const what = document.getElementById('search').value.trim();
+      if (!what) { alert('Type something to search nearby.'); return; }
+
+      getLocation(() => {
+        const query = encodeURIComponent(what);
+        const gmaps = `https://www.google.com/maps/search/${query}/@${lat},${lon},15z`;
+
+        window.open(gmaps, '_blank');
+
+        document.getElementById('map').src =
+          `https://maps.google.com/maps?q=${query}+near+${lat},${lon}&output=embed`;
+      });
+    }
+  </script>
+</body>
+</html>

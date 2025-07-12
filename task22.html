@@ -1,0 +1,182 @@
+      <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📱 Smart Action Panel</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #2f2f2f, #1a1a1a);
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
+
+    button {
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #00c3ff;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #009ecb;
+    }
+
+    video, canvas {
+      margin-top: 20px;
+      border-radius: 12px;
+      max-width: 100%;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    a.download-btn {
+      display: inline-block;
+      margin-top: 10px;
+      color: #00ffcc;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📱 Smart Action Panel</h1>
+
+  <div class="btn-group">
+    <button onclick="clickPhoto()">📸 Click Photo</button>
+    <button onclick="recordVideo()">🎥 Record 5s Video</button>
+    <button onclick="sendEmail()">📧 Send Email</button>
+    <button onclick="sendWhatsApp()">💬 WhatsApp</button>
+    <button onclick="sendSMS()">📲 Send SMS</button>
+    <button onclick="showLocation()">📍 Show Location</button>
+    <button onclick="searchDistance()">📏 Find Distance</button>
+    <button onclick="findNearbyGrocery()">🛒 Nearby Grocery</button>
+    <button onclick="showUnreadEmail()">📨 Last Unread Mail</button>
+    <button onclick="postToAllSocial()">🌐 Post to All Socials</button>
+  </div>
+
+  <video id="video" autoplay muted playsinline width="320" height="240"></video>
+  <canvas id="canvas" style="display:none;"></canvas>
+  <br>
+  <a id="download-photo" class="download-btn" style="display:none;">📥 Download Photo</a><br>
+  <a id="download-video" class="download-btn" style="display:none;">📥 Download Video</a>
+
+  <script>
+    const videoEl = document.getElementById('video');
+    const canvasEl = document.getElementById('canvas');
+    const photoDownload = document.getElementById('download-photo');
+    const videoDownload = document.getElementById('download-video');
+
+    // 1. Click Photo
+    function clickPhoto() {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        videoEl.srcObject = stream;
+        setTimeout(() => {
+          canvasEl.width = videoEl.videoWidth;
+          canvasEl.height = videoEl.videoHeight;
+          canvasEl.getContext('2d').drawImage(videoEl, 0, 0);
+          const photo = canvasEl.toDataURL('image/png');
+          photoDownload.href = photo;
+          photoDownload.download = "photo.png";
+          photoDownload.style.display = "inline";
+          stream.getTracks().forEach(track => track.stop());
+          alert("📸 Photo clicked!");
+        }, 3000);
+      }).catch(err => alert("Camera not accessible"));
+    }
+
+    // 2. Record Video
+    function recordVideo() {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+        videoEl.srcObject = stream;
+        const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : "video/webm";
+        const mediaRecorder = new MediaRecorder(stream, { mimeType });
+        const chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          videoDownload.href = url;
+          videoDownload.download = "video.webm";
+          videoDownload.style.display = "inline";
+          alert("🎥 Video recorded!");
+        };
+
+        mediaRecorder.start();
+        setTimeout(() => {
+          mediaRecorder.stop();
+          stream.getTracks().forEach(track => track.stop());
+        }, 5000);
+      }).catch(err => alert("Video not accessible"));
+    }
+
+    // 3. Send Email
+    function sendEmail() {
+      window.location.href = "mailto:test@example.com?subject=Smart%20App&body=Attached%20photo/video.";
+    }
+
+    // 4. WhatsApp
+    function sendWhatsApp() {
+      const phone = "918107355673"
+      const msg = "Hello from my Smart App!";
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+    }
+
+    // 5. Send SMS
+    function sendSMS() {
+      const phone = "+918107355673"
+      const msg = "Hey! This is a test SMS.";
+      window.location.href = `sms:${phone}?body=${encodeURIComponent(msg)}`;
+    }
+
+    // 6. Show Location
+    function showLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          window.open(`https://maps.google.com?q=${latitude},${longitude}`);
+        });
+      } else alert("Geolocation not supported");
+    }
+
+    // 7. Search Distance
+    function searchDistance() {
+      const loc = prompt("Enter destination location:");
+      if (loc) {
+        window.open(`https://www.google.com/maps/dir//${encodeURIComponent(loc)}`);
+      }
+    }+
+
+    // 8. Nearby Grocery
+    function findNearbyGrocery() {
+      window.open("https://www.google.com/maps/search/grocery+store+near+me");
+    }
+
+    // 9. Show Last Unread Email (Placeholder)
+    function showUnreadEmail() {
+      alert("⚠ This feature requires Gmail API + OAuth integration.");
+    }
+
+    // 10. Post to All Socials (Placeholder)
+    function postToAllSocial() {
+      alert("⚠ This feature requires integration with social APIs + user authentication.");
+    }
+  </script>
+</body>
+</html>

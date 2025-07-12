@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WhatsApp Sender</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e9f5ec;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #25D366;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1ebe5d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Send WhatsApp Message</h2>
+    <input type="text" id="phone" placeholder="Enter phone number (with country code)">
+    <textarea id="message" placeholder="Enter your message"></textarea>
+    <button onclick="sendWhatsApp()">Send</button>
+  </div>
+
+  <script>
+    function sendWhatsApp() {
+      const phone = document.getElementById("phone").value.trim();
+      const message = document.getElementById("message").value.trim();
+
+      if (phone === "" || message === "") {
+        alert("Please enter both number and message.");
+        return;
+      }
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    }
+  </script>
+
+</body>
+</html>

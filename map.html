@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Search Distance with Current Location</title>
+</head>
+<body style="background: #000; color: #0f0; font-family: Arial; text-align: center; padding-top: 100px;">
+  <h2>📍 Find Directions from Your Location</h2>
+  <button onclick="searchDistance()" style="padding: 10px 20px;">Search Distance</button>
+
+  <script>
+    function searchDistance() {
+      const destination = prompt("Enter destination location:");
+      if (!destination) return;
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const from = `${lat},${lon}`;
+            const to = encodeURIComponent(destination);
+            const url = `https://www.google.com/maps/dir/?api=1&origin=${from}&destination=${to}`;
+            window.open(url, "_blank");
+          },
+          err => alert("Unable to get current location.")
+        );
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    }
+  </script>
+</body>
+</html>

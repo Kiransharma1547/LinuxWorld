@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📱 Smart Action Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: #fff;
+    }
+
+    section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      position: relative;
+    }
+
+    section:nth-child(odd) {
+      background: linear-gradient(135deg, #1a1a1a, #2f2f2f);
+    }
+
+    section:nth-child(even) {
+      background: linear-gradient(135deg, #2f2f2f, #1a1a1a);
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #00f7ff;
+    }
+
+    button {
+      padding: 14px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 14px;
+      background: #00c3ff;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background: #009ecb;
+      transform: scale(1.05);
+    }
+
+    video, canvas {
+      margin-top: 20px;
+      border-radius: 12px;
+      max-width: 90%;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    a.download-btn {
+      margin-top: 15px;
+      color: #00ffcc;
+      text-decoration: underline;
+      display: inline-block;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #000000cc;
+      display: flex;
+      justify-content: center;
+      z-index: 1000;
+      padding: 10px 0;
+    }
+
+    nav a {
+      color: #0ff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#photo">📸 Photo</a>
+    <a href="#video">🎥 Video</a>
+    <a href="#email">📧 Email</a>
+    <a href="#whatsapp">💬 WhatsApp</a>
+    <a href="#sms">📲 SMS</a>
+    <a href="#location">📍 Location</a>
+    <a href="#distance">📏 Distance</a>
+    <a href="#grocery">🛒 Grocery</a>
+    <a href="#mail">📨 Mail</a>
+    <a href="#social">🌐 Social</a>
+  </nav>
+
+  <section id="photo">
+    <h1>📸 Click a Photo</h1>
+    <button onclick="clickPhoto()">Capture</button>
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <a id="download-photo" class="download-btn" style="display:none;">📥 Download Photo</a>
+  </section>
+
+  <section id="video">
+    <h1>🎥 Record a 5-second Video</h1>
+    <button onclick="recordVideo()">Start Recording</button>
+    <a id="download-video" class="download-btn" style="display:none;">📥 Download Video</a>
+  </section>
+
+  <section id="email">
+    <h1>📧 Send an Email</h1>
+    <button onclick="sendEmail()">Open Email App</button>
+  </section>
+
+  <section id="whatsapp">
+    <h1>💬 Send WhatsApp Message</h1>
+    <button onclick="sendWhatsApp()">Open WhatsApp</button>
+  </section>
+
+  <section id="sms">
+    <h1>📲 Send an SMS</h1>
+    <button onclick="sendSMS()">Send SMS</button>
+  </section>
+
+  <section id="location">
+    <h1>📍 Detect Current Location</h1>
+    <button onclick="showLocation()">Show Location</button>
+  </section>
+
+  <section id="distance">
+    <h1>📏 Navigate Distance</h1>
+    <button onclick="searchDistance()">Search Destination</button>
+  </section>
+
+  <section id="grocery">
+    <h1>🛒 Find Nearby Grocery Stores</h1>
+    <button onclick="findNearbyGrocery()">Search Grocery</button>
+  </section>
+
+  <section id="mail">
+    <h1>📨 Show Last Unread Mail</h1>
+    <button onclick="showUnreadEmail()">Check Mail</button>
+  </section>
+
+  <section id="social">
+    <h1>🌐 Post to All Social Media</h1>
+    <button onclick="postToAllSocial()">Post</button>
+  </section>
+
+  <script>
+    const videoEl = document.getElementById('video');
+    const canvasEl = document.getElementById('canvas');
+    const photoDownload = document.getElementById('download-photo');
+    const videoDownload = document.getElementById('download-video');
+
+    function clickPhoto() {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        videoEl.srcObject = stream;
+        setTimeout(() => {
+          canvasEl.width = videoEl.videoWidth;
+          canvasEl.height = videoEl.videoHeight;
+          canvasEl.getContext('2d').drawImage(videoEl, 0, 0);
+          const photo = canvasEl.toDataURL('image/png');
+          photoDownload.href = photo;
+          photoDownload.download = "photo.png";
+          photoDownload.style.display = "inline";
+          stream.getTracks().forEach(track => track.stop());
+          alert("📸 Photo clicked!");
+        }, 3000);
+      }).catch(() => alert("Camera not accessible"));
+    }
+
+    function recordVideo() {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+        videoEl.srcObject = stream;
+        const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : "video/webm";
+        const mediaRecorder = new MediaRecorder(stream, { mimeType });
+        const chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          videoDownload.href = url;
+          videoDownload.download = "video.webm";
+          videoDownload.style.display = "inline";
+          alert("🎥 Video recorded!");
+        };
+
+        mediaRecorder.start();
+        setTimeout(() => {
+          mediaRecorder.stop();
+          stream.getTracks().forEach(track => track.stop());
+        }, 5000);
+      }).catch(() => alert("Video not accessible"));
+    }
+
+    function sendEmail() {
+      window.location.href = "mailto:test@example.com?subject=Smart%20App&body=Attached%20photo/video.";
+    }
+
+    function sendWhatsApp() {
+      const phone = "918107355673";
+      const msg = "Hello from my Smart App!";
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+    }
+
+    function sendSMS() {
+      const phone = "+918107355673";
+      const msg = "Hey! This is a test SMS.";
+      window.location.href = `sms:${phone}?body=${encodeURIComponent(msg)}`;
+    }
+
+    function showLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          window.open(`https://maps.google.com?q=${latitude},${longitude}`);
+        });
+      } else alert("Geolocation not supported");
+    }
+
+    function searchDistance() {
+      const loc = prompt("Enter destination location:");
+      if (loc) {
+        window.open(`https://www.google.com/maps/dir//${encodeURIComponent(loc)}`);
+      }
+    }
+
+    function findNearbyGrocery() {
+      window.open("https://www.google.com/maps/search/grocery+store+near+me");
+    }
+
+    function showUnreadEmail() {
+      alert("⚠ This feature requires Gmail API + OAuth integration.");
+    }
+
+    function postToAllSocial() {
+      alert("⚠ This feature requires integration with social APIs + user authentication.");
+    }
+  </script>
+</body>
+</html>

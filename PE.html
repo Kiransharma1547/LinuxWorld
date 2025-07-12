@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Capture and Send Email</title>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    window.onload = () => {
+      emailjs.init("YOUR_PUBLIC_KEY"); // 👈 Replace this
+      startWebcam();
+    };
+  </script>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      text-align: center;
+      font-family: Arial;
+    }
+    video, canvas {
+      border: 2px solid white;
+      margin: 10px;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Capture & Email Photo</h2>
+
+<video id="webcam" autoplay playsinline width="400"></video><br>
+<canvas id="snapshot" width="400" height="300" style="display:none;"></canvas><br>
+
+<form id="email-form">
+  <input type="text" name="from_name" placeholder="Your Name" required><br>
+  <input type="email" name="reply_to" placeholder="Your Email" required><br>
+  <input type="hidden" name="image_data" id="image_data">
+  <button type="button" onclick="captureAndSend()">📸 Click Me & Send Email</button>
+</form>
+
+<script>
+  const video = document.getElementById('webcam');
+  const canvas = document.getElementById('snapshot');
+  const context = canvas.getContext('2d');
+
+  async function startWebcam() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+    } catch (err) {
+      console.error("Webcam error:", err);
+      alert("❌ Failed to access webcam: " + err.message);
+    }
+  }
+
+  function captureAndSend() {
+    // Draw image to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageBase64 = canvas.toDataURL("image/png");
+
+    // Set base64 into form
+    document.getElementById('image_data').value = imageBase64;
+
+    // Send using EmailJS
+    emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", "#email-form")
+      .then(function(response) {
+        console.log("✅ SUCCESS:", response.status, response.text);
+        alert("✅ Email sent!");
+      }, function(error) {
+        console.error("❌ Email failed:", error);
+        alert("❌ Email sending failed. Check browser console.");
+      });
+  }
+</script>
+
+</body>
+</html>

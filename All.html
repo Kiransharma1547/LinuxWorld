@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All-in-One JavaScript Tool</title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("n7xso1J9Viazz_HGh");
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+    }
+    header {
+      background: #111;
+      padding: 20px;
+      text-align: center;
+      font-size: 2rem;
+      background-image: linear-gradient(90deg, #00bfff, #ff00cc, #ffa500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      background: #111;
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    nav a {
+      color: #00bfff;
+      text-decoration: none;
+      padding: 12px 18px;
+      display: block;
+      font-weight: bold;
+    }
+    nav a:hover {
+      background: #00bfff;
+      color: #000;
+      border-radius: 6px;
+    }
+    section {
+      display: none;
+      padding: 50px 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    section.active {
+      display: block;
+    }
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #00bfff, #ff00cc, #ffa500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+    input, textarea, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    input, textarea, select {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    button {
+      background-color: #00bfff;
+      color: #000;
+      cursor: pointer;
+    }
+    video {
+      width: 100%;
+      border-radius: 10px;
+    }
+    @media(max-width: 600px) {
+      header { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>📦 All-in-One JavaScript Tool</header>
+  <nav>
+    <a href="#" onclick="showPage('camera')">Camera</a>
+    <a href="#" onclick="showPage('recording')">Recording</a>
+    <a href="#" onclick="showPage('email')">Email</a>
+    <a href="#" onclick="showPage('whatsapp')">WhatsApp</a>
+    <a href="#" onclick="showPage('sms')">SMS</a>
+    <a href="#" onclick="showPage('gps')">Location</a>
+    <a href="#" onclick="showPage('map')">Map</a>
+    <a href="#" onclick="showPage('route')">Route</a>
+    <a href="#" onclick="showPage('store')">Stores</a>
+    <a href="#" onclick="showPage('social')">Social Post</a>
+    <a href="#" onclick="showPage('social-type')">Social Type</a>
+  </nav>
+
+  <section id="camera" class="active">
+    <h2>🎥 Camera</h2>
+    <button onclick="startCamera()">Start Camera</button>
+    <button onclick="stopCamera()">Stop Camera</button>
+    <video id="video" autoplay playsinline style="display:none;"></video>
+    <button onclick="takePhoto()">Take Photo</button>
+  </section>
+
+  <section id="recording">
+    <h2>🎬 Video Recording</h2>
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop & Save</button>
+  </section>
+
+  <section id="email">
+    <h2>📧 Send Email</h2>
+    <input type="text" id="from_name" placeholder="Your Name">
+    <input type="email" id="from_email" placeholder="Your Email">
+    <input type="text" id="subject" placeholder="Subject">
+    <textarea id="message" placeholder="Your Message"></textarea>
+    <button onclick="sendEmail()">Send Email</button>
+  </section>
+
+  <section id="whatsapp">
+    <h2>💬 WhatsApp Message</h2>
+    <input id="waPhone" placeholder="Phone Number">
+    <input id="waMsg" placeholder="Message">
+    <button onclick="sendWhatsApp(waPhone.value, waMsg.value)">Send WhatsApp</button>
+  </section>
+
+  <section id="sms">
+    <h2>📱 Send SMS</h2>
+    <input id="smsPhone" placeholder="Phone Number">
+    <input id="smsMsg" placeholder="Message">
+    <button onclick="sendSMS(smsPhone.value, smsMsg.value)">Send SMS</button>
+  </section>
+
+  <section id="gps">
+    <h2>📍 Current Location</h2>
+    <button onclick="getLocation()">Get Location</button>
+  </section>
+
+  <section id="map">
+    <h2>🗺 Open Google Map</h2>
+    <button onclick="showMap()">Open in Map</button>
+  </section>
+
+  <section id="route">
+    <h2>🚗 Show Route</h2>
+    <input id="dest" placeholder="Destination">
+    <button onclick="showRoute(dest.value)">Show Route</button>
+  </section>
+
+  <section id="store">
+    <h2>🛒 Nearby Grocery Stores</h2>
+    <button onclick="searchNearbyGrocery()">Find Stores</button>
+  </section>
+
+  <section id="social">
+    <h2>🌐 Social Post</h2>
+    <select id="socialPlatform">
+      <option>Instagram</option>
+      <option>Twitter</option>
+      <option>LinkedIn</option>
+    </select>
+    <input id="socialMessage" placeholder="Message">
+    <button onclick="postToSocial(socialPlatform.value, socialMessage.value)">Post</button>
+  </section>
+
+  <section id="social-type">
+    <h2>🔄 Social Placeholder</h2>
+    <button onclick="readGmail()">Read Gmail</button>
+  </section>
+
+  <script>
+    let video = document.getElementById("video");
+    let stream = null, mediaRecorder, chunks = [];
+
+    function showPage(id) {
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startCamera() {
+      if (stream) return;
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(s => {
+          stream = s;
+          video.srcObject = stream;
+          video.style.display = 'block';
+        })
+        .catch(() => alert("Camera access denied"));
+    }
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        video.srcObject = null;
+        video.style.display = 'none';
+        stream = null;
+      }
+    }
+    function takePhoto() {
+      if (!stream) return alert("Start camera first");
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext("2d").drawImage(video, 0, 0);
+      const link = document.createElement("a");
+      link.download = "photo.png";
+      link.href = canvas.toDataURL();
+      link.click();
+      stopCamera();
+    }
+    function startRecording() {
+      if (!stream) return alert("Start camera first");
+      chunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: "video/webm" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "video.webm";
+        a.click();
+        stopCamera();
+      };
+      mediaRecorder.start();
+    }
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+    }
+    function sendEmail() {
+      emailjs.send("service_7qrvwwz", "template_c56uq5k", {
+        from_name: from_name.value,
+        from_email: from_email.value,
+        subject: subject.value,
+        message: message.value
+      }).then(() => alert("Email sent!"))
+        .catch(err => alert("Email failed."));
+    }
+    function sendWhatsApp(p, m) {
+      window.open(`https://wa.me/${p}?text=${encodeURIComponent(m)}`);
+    }
+    function sendSMS(p, m) {
+      window.open(`sms:${p}?body=${encodeURIComponent(m)}`);
+    }
+    function getLocation() {
+      navigator.geolocation.getCurrentPosition(pos => {
+        alert(`Lat: ${pos.coords.latitude}, Long: ${pos.coords.longitude}`);
+      });
+    }
+    function showMap() {
+      navigator.geolocation.getCurrentPosition(pos => {
+        window.open(`https://maps.google.com?q=${pos.coords.latitude},${pos.coords.longitude}`);
+      });
+    }
+    function showRoute(dest) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        window.open(`https://maps.google.com/dir/${pos.coords.latitude},${pos.coords.longitude}/${dest}`);
+      });
+    }
+    function searchNearbyGrocery() {
+      navigator.geolocation.getCurrentPosition(pos => {
+        window.open(`https://maps.google.com/search/grocery/@${pos.coords.latitude},${pos.coords.longitude},15z`);
+      });
+    }
+    function postToSocial(p, m) {
+      alert(`Post to ${p}: ${m}`);
+    }
+    function readGmail() {
+      alert("Google API required for Gmail access");
+    }
+  </script>
+</body>
+</html>

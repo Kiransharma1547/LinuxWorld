@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Geolocation</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #0f0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    #status {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+    }
+    #coords {
+      margin-top: 1rem;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      background: #0a74da;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #095bb5;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📍 Live Location Tracker</h1>
+  <div id="status">Click “Start Tracking” to get your location.</div>
+  <div id="coords"></div>
+  <button id="startBtn">Start Tracking</button>
+  <button id="stopBtn" style="display:none;">Stop Tracking</button>
+
+  <script>
+    let watchId = null;
+    const statusEl = document.getElementById('status');
+    const coordsEl = document.getElementById('coords');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
+    function handleSuccess(position) {
+      const { latitude, longitude, accuracy } = position.coords;
+      statusEl.textContent = 'Location updated:';
+      coordsEl.textContent = 
+        `Latitude: ${latitude.toFixed(6)}°, ` +
+        `Longitude: ${longitude.toFixed(6)}° ` +
+        `(±${accuracy} m)`;
+    }
+
+    function handleError(err) {
+      switch(err.code) {
+        case err.PERMISSION_DENIED:
+          statusEl.textContent = 'Error: Permission denied.';
+          break;
+        case err.POSITION_UNAVAILABLE:
+          statusEl.textContent = 'Error: Position unavailable.';
+          break;
+        case err.TIMEOUT:
+          statusEl.textContent = 'Error: Request timed out.';
+          break;
+        default:
+          statusEl.textContent = 'Error: Unknown error.';
+      }
+      coordsEl.textContent = '';
+      stopTracking();
+    }
+
+    function startTracking() {
+      if (!navigator.geolocation) {
+        statusEl.textContent = 'Geolocation is not supported by your browser.';
+        return;
+      }
+      statusEl.textContent = 'Requesting location…';
+      watchId = navigator.geolocation.watchPosition(
+        handleSuccess,
+        handleError,
+        { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+      );
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-block';
+    }
+
+    function stopTracking() {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+      statusEl.textContent = 'Tracking stopped.';
+      startBtn.style.display = 'inline-block';
+      stopBtn.style.display = 'none';
+    }
+
+    startBtn.addEventListener('click', startTracking);
+    stopBtn.addEventListener('click', stopTracking);
+  </script>
+
+</body>
+</html>
